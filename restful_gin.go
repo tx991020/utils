@@ -1,16 +1,5 @@
 package utils
 
-import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
-	"reflect"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
-)
-
 const tp = "text/plain"
 
 const MaxUint = ^uint64(0)
@@ -95,7 +84,7 @@ func GPathInt(match string, must bool, alias string) func(*gin.Context) {
 	}
 }
 
-func GPathRequireString(match string, must bool, alias string) func(*gin.Context) {
+func GPathRequireString(match string) func(*gin.Context) {
 	return GPathString(match, true, "")
 }
 func GPathRequireStringAlias(match string, must bool, alias string) func(*gin.Context) {
@@ -138,7 +127,7 @@ func GHeaderOptionalIntAlias(match string, alias string) func(*gin.Context) {
 func GHeaderInt(match string, must bool, alias string) func(*gin.Context) {
 	return func(c *gin.Context) {
 		if len(c.Request.Header[match]) > 0 {
-			if id, err := strconv.ParseInt(c.Request.Header[match][0], 10, 64); err != nil {
+			if id, err := strconv.ParseInt(c.GetHeader(match), 10, 64); err != nil {
 				if must {
 					c.Data(http.StatusBadRequest, tp, []byte(fmt.Sprintf("Parse header: %s failed.", match)))
 					c.Abort()
@@ -172,15 +161,17 @@ func GHeaderOptionalStringAlias(match string, alias string) func(*gin.Context) {
 
 func GHeaderString(match string, must bool, alias string) func(*gin.Context) {
 	return func(c *gin.Context) {
-		if len(c.Request.Header[match]) == 0 {
+		if len(c.GetHeader(match)) == 0 {
 			if must {
 				c.Data(http.StatusBadRequest, tp, []byte(fmt.Sprintf("Parse header: %s failed.", match)))
 				c.Abort()
 			}
 		} else {
-			c.Set(match, c.Request.Header[match])
+
+			c.Set(match, c.GetHeader(match))
 			if len(alias) > 0 {
 				c.Set(alias, c.Request.Header[match])
+
 			}
 		}
 	}
