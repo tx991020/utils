@@ -1,127 +1,139 @@
 package logger
 
 import (
-	"os"
-	"time"
-
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-// logger strcut
-type logger struct {
-	atom  zap.AtomicLevel
-	sugar *zap.SugaredLogger
+var logger, _ = zap.NewDevelopment()
+var sugar = logger.Sugar()
+
+// Debug outputs a message at debug level.
+// This call is a wrapper around [Logger.Debug](https://godoc.org/go.uber.org/zap#Logger.Debug)
+func Debug(msg string, fields ...zapcore.Field) {
+	logger.Debug(msg, fields...)
 }
 
-// custom encoder
-func encoder() zapcore.Encoder {
-	return zapcore.NewConsoleEncoder(zapcore.EncoderConfig{
-		MessageKey:  "msg",
-		LevelKey:    "level",
-		EncodeLevel: zapcore.CapitalLevelEncoder,
-		TimeKey:     "ts",
-		EncodeTime: func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
-			enc.AppendString(t.Format("2006-01-02 15:04:05"))
-		},
-		CallerKey:    "file",
-		EncodeCaller: zapcore.ShortCallerEncoder,
-		EncodeDuration: func(d time.Duration, enc zapcore.PrimitiveArrayEncoder) {
-			enc.AppendInt64(int64(d) / 1000000)
-		},
-	})
+// Debuga uses fmt.Sprint to construct and log a message at debug level.
+// This call is a wrapper around [Sugaredlogger.Debug](https://godoc.org/go.uber.org/zap#Sugaredlogger.Debug)
+func Debuga(args ...interface{}) {
+	sugar.Debug(args...)
 }
 
-// New create logger
-func New() (*logger, error) {
-	l := &logger{}
-
-	l.atom = zap.NewAtomicLevel()
-
-	//encoderCfg := zap.NewProductionEncoderConfig()
-	encoderCfg := zap.NewDevelopmentEncoderConfig()
-
-	zaplogger := zap.New(zapcore.NewCore(
-		//zapcore.NewJSONEncoder(encoderCfg),
-		zapcore.NewConsoleEncoder(encoderCfg),
-		zapcore.Lock(os.Stdout),
-		l.atom,
-	), zap.AddCaller())
-
-	l.atom.SetLevel(zap.InfoLevel)
-	l.sugar = zaplogger.Sugar()
-
-	return l, nil
+// Debugf uses fmt.Sprintf to construct and log a message at debug level.
+// This call is a wrapper around [Sugaredlogger.Debugf](https://godoc.org/go.uber.org/zap#Sugaredlogger.Debugf)
+func Debugf(template string, args ...interface{}) {
+	sugar.Debugf(template, args...)
 }
 
-func (l *logger) SetLevel(level string) {
-
-	var zaplevel zapcore.Level
-
-	switch level {
-	case "debug":
-		zaplevel = zap.DebugLevel
-	case "info":
-		zaplevel = zap.InfoLevel
-	case "warn":
-		zaplevel = zap.WarnLevel
-	case "error":
-		zaplevel = zap.ErrorLevel
-	default:
-		zaplevel = zap.InfoLevel
-	}
-
-	l.atom.SetLevel(zaplevel)
+// Debugw logs a message at debug level with some additional context.
+// This call is a wrapper around [Sugaredlogger.Debugw](https://godoc.org/go.uber.org/zap#Sugaredlogger.Debugw)
+func Debugw(msg string, keysAndValues ...interface{}) {
+	sugar.Debugw(msg, keysAndValues...)
 }
 
-func (l *logger) Info(args interface{}) {
-	l.sugar.Info(args)
+// DebugEnabled returns whether output of messages at the debug level is currently enabled.
+func DebugEnabled() bool {
+	return logger.Core().Enabled(zap.DebugLevel)
 }
 
-func (l *logger) Infof(template string, args ...interface{}) {
-	l.sugar.Infof(template, args...)
+// Error outputs a message at error level.
+// This call is a wrapper around [logger.Error](https://godoc.org/go.uber.org/zap#logger.Error)
+func Error(msg string, fields ...zapcore.Field) {
+	logger.Error(msg, fields...)
 }
 
-func (l *logger) Warn(args interface{}) {
-	l.sugar.Warn(args)
+// Errora uses fmt.Sprint to construct and log a message at error level.
+// This call is a wrapper around [Sugaredlogger.Error](https://godoc.org/go.uber.org/zap#Sugaredlogger.Error)
+func Errora(args ...interface{}) {
+	sugar.Error(args...)
 }
 
-func (l *logger) Warnf(template string, args ...interface{}) {
-	l.sugar.Warnf(template, args...)
+// Errorf uses fmt.Sprintf to construct and log a message at error level.
+// This call is a wrapper around [Sugaredlogger.Errorf](https://godoc.org/go.uber.org/zap#Sugaredlogger.Errorf)
+func Errorf(template string, args ...interface{}) {
+	sugar.Errorf(template, args...)
 }
 
-func (l *logger) Debug(args interface{}) {
-	l.sugar.Debug(args)
+// Errorw logs a message at error level with some additional context.
+// This call is a wrapper around [Sugaredlogger.Errorw](https://godoc.org/go.uber.org/zap#Sugaredlogger.Errorw)
+func Errorw(msg string, keysAndValues ...interface{}) {
+	sugar.Errorw(msg, keysAndValues...)
 }
 
-func (l *logger) Debugf(template string, args ...interface{}) {
-	l.sugar.Debugf(template, args...)
+// ErrorEnabled returns whether output of messages at the error level is currently enabled.
+func ErrorEnabled() bool {
+	return logger.Core().Enabled(zap.ErrorLevel)
 }
 
-func (l *logger) Error(args interface{}) {
-	l.sugar.Error(args)
+// Warn outputs a message at warn level.
+// This call is a wrapper around [logger.Warn](https://godoc.org/go.uber.org/zap#logger.Warn)
+func Warn(msg string, fields ...zapcore.Field) {
+	logger.Warn(msg, fields...)
 }
 
-func (l *logger) Errorf(template string, args ...interface{}) {
-	l.sugar.Errorf(template, args...)
+// Warna uses fmt.Sprint to construct and log a message at warn level.
+// This call is a wrapper around [Sugaredlogger.Warn](https://godoc.org/go.uber.org/zap#Sugaredlogger.Warn)
+func Warna(args ...interface{}) {
+	sugar.Warn(args...)
 }
 
-func (l *logger) Panic(args interface{}) {
-	l.sugar.Panic(args)
+// Warnf uses fmt.Sprintf to construct and log a message at warn level.
+// This call is a wrapper around [Sugaredlogger.Warnf](https://godoc.org/go.uber.org/zap#Sugaredlogger.Warnf)
+func Warnf(template string, args ...interface{}) {
+	sugar.Warnf(template, args...)
 }
 
-func (l *logger) Panicf(template string, args ...interface{}) {
-	l.sugar.Panicf(template, args...)
+// Warnw logs a message at warn level with some additional context.
+// This call is a wrapper around [Sugaredlogger.Warnw](https://godoc.org/go.uber.org/zap#Sugaredlogger.Warnw)
+func Warnw(msg string, keysAndValues ...interface{}) {
+	sugar.Warnw(msg, keysAndValues...)
 }
 
-func (l *logger) Fatal(args interface{}) {
-	l.sugar.Fatal(args)
+// WarnEnabled returns whether output of messages at the warn level is currently enabled.
+func WarnEnabled() bool {
+	return logger.Core().Enabled(zap.WarnLevel)
 }
 
-func (l *logger) Fatalf(template string, args ...interface{}) {
-	l.sugar.Fatalf(template, args...)
+// Info outputs a message at information level.
+// This call is a wrapper around [logger.Info](https://godoc.org/go.uber.org/zap#logger.Info)
+func Info(msg string, fields ...zapcore.Field) {
+	logger.Info(msg, fields...)
 }
 
-func (l *logger) Close() error {
-	return l.sugar.Sync()
+// Infoa uses fmt.Sprint to construct and log a message at info level.
+// This call is a wrapper around [Sugaredlogger.Info](https://godoc.org/go.uber.org/zap#Sugaredlogger.Info)
+func Infoa(args ...interface{}) {
+	sugar.Info(args...)
+}
+
+// Infof uses fmt.Sprintf to construct and log a message at info level.
+// This call is a wrapper around [Sugaredlogger.Infof](https://godoc.org/go.uber.org/zap#Sugaredlogger.Infof)
+func Infof(template string, args ...interface{}) {
+	sugar.Infof(template, args...)
+}
+
+// Infow logs a message at info level with some additional context.
+// This call is a wrapper around [Sugaredlogger.Infow](https://godoc.org/go.uber.org/zap#Sugaredlogger.Infow)
+func Infow(msg string, keysAndValues ...interface{}) {
+	sugar.Infow(msg, keysAndValues...)
+}
+
+// InfoEnabled returns whether output of messages at the info level is currently enabled.
+func InfoEnabled() bool {
+	return logger.Core().Enabled(zap.InfoLevel)
+}
+
+// With creates a child logger and adds structured context to it. Fields added
+// to the child don't affect the parent, and vice versa.
+// This call is a wrapper around [logger.With](https://godoc.org/go.uber.org/zap#logger.With)
+func With(fields ...zapcore.Field) *zap.Logger {
+	return logger.With(fields...)
+}
+
+// Sync flushes any buffered log entries.
+// Processes should normally take care to call Sync before exiting.
+// This call is a wrapper around [logger.Sync](https://godoc.org/go.uber.org/zap#logger.Sync)
+func Sync() error {
+	return logger.Sync()
 }

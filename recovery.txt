@@ -5,14 +5,16 @@ package utils
 import (
 	"bytes"
 	"fmt"
-	"git.corp.hetao101.com/backend/htutil/logs"
-	"gopkg.in/gin-gonic/gin.v1"
+
 	"io/ioutil"
 	"net"
 	"net/http/httputil"
 	"os"
 	"runtime"
 	"syscall"
+
+	"github.com/tx991020/utils/logger"
+	"gopkg.in/gin-gonic/gin.v1"
 )
 
 var (
@@ -45,9 +47,9 @@ func RecoveryWithWriter() gin.HandlerFunc {
 				b, _ := httputil.DumpRequest(c.Request, false)
 				r := string(b)
 				if brokenPipe {
-					logs.Error("%s\n%s", err, r)
+					logger.Errora("%s\n%s", err, r)
 				} else {
-					logs.Critical("[Recovery] panic recovered:\n%s\n%s\n%s", r, err, stack(3))
+					logger.Critical("[Recovery] panic recovered:\n%s\n%s\n%s", r, err, stack(3))
 				}
 
 				// If the connection is dead, we can't write a status to it.
