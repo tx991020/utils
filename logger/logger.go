@@ -1,4 +1,4 @@
-package zap
+package logger
 
 import (
 	"os"
