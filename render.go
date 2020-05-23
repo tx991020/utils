@@ -1,13 +1,15 @@
-
 package utils
 
 import (
 	"bytes"
-	"github.com/tx991020/utils/logs"
+	"fmt"
 	"html/template"
+	"io/ioutil"
+
+	"github.com/tx991020/utils/logs"
 )
 
-func Render(path string, config map[string]interface{}) ([]byte, error) {
+func Render(path string, config interface{}) ([]byte, error) {
 	t, err := template.ParseFiles(path)
 	if err != nil {
 		logs.Error(err.Error())
@@ -22,4 +24,20 @@ func Render(path string, config map[string]interface{}) ([]byte, error) {
 	}
 	return bufer.Bytes(), nil
 
+}
+
+func RenderAppend(old, new, data string) error {
+	readAll, err := ioutil.ReadFile(old)
+	if err != nil {
+		return err
+	}
+	replaceString, err := Replace(`\/\/[^}]+}}`, []byte(string(fmt.Sprintf(data+
+		"\n    //{{.data}}`"))), readAll)
+	if err != nil {
+		return err
+	}
+	if err := PutContents(new, string(replaceString)); err != nil {
+		return err
+	}
+	return nil
 }
