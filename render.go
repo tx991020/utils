@@ -31,7 +31,7 @@ func RenderAppend(old, new, data string) error {
 	if err != nil {
 		return err
 	}
-	replaceString, err := Replace(`\/\/[^}]+}}`, []byte(string(fmt.Sprintf(data+
+	replaceString, err := Replace(`\/\/{{[^}]+}}`, []byte(string(fmt.Sprintf(data+
 		"\n    //{{.data}}`"))), readAll)
 	if err != nil {
 		return err
