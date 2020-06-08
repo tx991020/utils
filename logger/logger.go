@@ -5,7 +5,7 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var logger, _ = zap.NewDevelopment()
+var logger, _ = zap.NewDevelopment(zap.AddCallerSkip(1))
 var sugar = logger.Sugar()
 
 // Debug outputs a message at debug level.
