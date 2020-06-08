@@ -113,7 +113,11 @@ func Infof(template string, args ...interface{}) {
 	sugar.Infof(template, args...)
 }
 
-
+// Infow logs a message at info level with some additional context.
+// This call is a wrapper around [Sugaredlogger.Infow](https://godoc.org/go.uber.org/zap#Sugaredlogger.Infow)
+func Infow(msg string, keysAndValues ...interface{}) {
+	sugar.Infow(msg, keysAndValues...)
+}
 
 // InfoEnabled returns whether output of messages at the info level is currently enabled.
 func InfoEnabled() bool {

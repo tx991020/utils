@@ -24,3 +24,22 @@ func Structs2Maps(list []interface{}) []map[string]interface{} {
 	}
 	return ret
 }
+
+func Struct2MapOmitEmpty(obj interface{}) map[string]interface{} {
+	t := reflect.TypeOf(obj).Elem()
+	v := reflect.ValueOf(obj).Elem()
+
+	var data = make(map[string]interface{})
+	for i := 0; i < t.NumField(); i++ {
+		if !v.Field(i).IsZero() {
+			if t.Field(i).Name == "ID" {
+				data["_id"] = v.Field(i).Interface()
+			} else {
+				data[t.Field(i).Name] = v.Field(i).Interface()
+			}
+
+		}
+
+	}
+	return data
+}
