@@ -11,7 +11,10 @@ require (
 	github.com/gin-gonic/gin v1.6.2
 	github.com/shiena/ansicolor v0.0.0-20151119151921-a422bbe96644 // indirect
 	github.com/spf13/viper v1.6.3
+	github.com/stretchr/testify v1.5.1
+	github.com/tal-tech/go-zero v1.0.15
 	go.uber.org/zap v1.15.0
-	golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
-	golang.org/x/text v0.3.2
+	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
+	golang.org/x/text v0.3.3
+	gopkg.in/cheggaaa/pb.v1 v1.0.28
 )

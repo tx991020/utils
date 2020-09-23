@@ -282,3 +282,5 @@ func Dir(path string) string {
 func Ext(path string) string {
 	return filepath.Ext(path)
 }
+
+
