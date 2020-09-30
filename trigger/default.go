@@ -47,3 +47,4 @@ func Events() []string {
 func EventCount() int {
 	return defaultTrigger.EventCount()
 }
+
