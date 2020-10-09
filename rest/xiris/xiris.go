@@ -21,6 +21,7 @@ func GRequestBody(c iris.Context) {
 	} else {
 
 		c.Values().Set("requestBody", b)
+		c.Next()
 	}
 	return
 }
@@ -35,8 +36,10 @@ func GRequestBodyMap(c iris.Context) {
 		m := map[string]interface{}{}
 		if err = json.Unmarshal(b, &m); err != nil {
 			c.Text(fmt.Sprintf("Json unmarshal failed: %s, %v, %v", string(b), m, err))
+			c.StopExecution()
 		} else {
 			c.Values().Set("requestBody", m)
+			c.Next()
 		}
 	}
 	return
@@ -59,6 +62,7 @@ func GRequestBodyObject(t reflect.Type, idl string) func(iris.Context) {
 					c.StopExecution()
 				} else {
 					c.Values().Set("requestBody", instance)
+					c.Next()
 				}
 			case "xml":
 			default:
@@ -88,8 +92,10 @@ func GPathInt(match string, must bool, alias string) func(iris.Context) {
 			}
 		} else {
 			c.Values().Set(match, n)
+			c.Next()
 			if len(alias) > 0 {
 				c.Values().Set(alias, n)
+				c.Next()
 			}
 		}
 	}
@@ -119,8 +125,10 @@ func GPathString(match string, must bool, alias string) func(iris.Context) {
 			}
 		} else {
 			c.Values().Set(match, c.Params().Get(match))
+			c.Next()
 			if len(alias) > 0 {
 				c.Values().Set(alias, c.Params().Get(match))
+				c.Next()
 			}
 		}
 	}
@@ -146,8 +154,10 @@ func GHeaderInt(match string, must bool, alias string) func(iris.Context) {
 				}
 			} else {
 				c.Values().Set(match, id)
+				c.Next()
 				if len(alias) > 0 {
 					c.Values().Set(alias, id)
+					c.Next()
 				}
 			}
 		} else if must {
@@ -181,8 +191,10 @@ func GHeaderString(match string, must bool, alias string) func(iris.Context) {
 		} else {
 
 			c.Values().Set(match, c.GetHeader(match))
+			c.Next()
 			if len(alias) > 0 {
 				c.Values().Set(alias, c.GetHeader(match))
+				c.Next()
 
 			}
 		}
@@ -201,13 +213,17 @@ func GHeaderStringDefault(match string, must bool, alias, defaultValue string) f
 				c.StopExecution()
 			}
 			c.Values().Set(match, defaultValue)
+			c.Next()
 			if len(alias) > 0 {
 				c.Values().Set(alias, defaultValue)
+				c.Next()
 			}
 		} else {
 			c.Values().Set(match, c.GetHeader(match))
+			c.Next()
 			if len(alias) > 0 {
 				c.Values().Set(alias, c.GetHeader(match))
+				c.Next()
 			}
 		}
 	}
@@ -243,8 +259,10 @@ func GQueryPositiveInt(match string, must bool, alias string) func(iris.Context)
 			c.StopExecution()
 		} else {
 			c.Values().Set(match, n)
+			c.Next()
 			if len(alias) > 0 {
 				c.Values().Set(alias, n)
+				c.Next()
 			}
 		}
 	}
@@ -276,16 +294,20 @@ func GQueryInt(match string, must bool, alias string, defaultValue int64) func(i
 				return
 			}
 			c.Values().Set(match, defaultValue)
+			c.Next()
 			if len(alias) > 0 {
 				c.Values().Set(alias, defaultValue)
+				c.Next()
 			}
 		} else if n, err := strconv.ParseInt(q[match][0], 10, 64); err != nil {
 			c.Text(fmt.Sprintf("Parse query param: %s failed.", match))
 			c.StopExecution()
 		} else {
 			c.Values().Set(match, n)
+			c.Next()
 			if len(alias) > 0 {
 				c.Values().Set(alias, n)
+				c.Next()
 			}
 		}
 	}
@@ -311,8 +333,10 @@ func GQueryString(match string, must bool, alias string) func(iris.Context) {
 			}
 		} else {
 			c.Values().Set(match, q[match][0])
+			c.Next()
 			if len(alias) > 0 {
 				c.Values().Set(alias, q[match][0])
+				c.Next()
 			}
 		}
 	}
@@ -336,8 +360,11 @@ func GQueryStringDefault(match string, must bool, alias, defaultValue string) fu
 			}
 		} else {
 			c.Values().Set(match, q[match][0])
+			c.Next()
+
 			if len(alias) > 0 {
 				c.Values().Set(alias, q[match][0])
+				c.Next()
 			}
 		}
 	}
