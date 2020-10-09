@@ -1,4 +1,4 @@
-package utils
+package xgin
 
 import (
 	"encoding/json"
@@ -346,6 +346,4 @@ func GJsonResponse(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
 }
 
-func GXmlResponse(c *gin.Context) {
-	c.Header("Content-Type", "application/xml")
-}
+
